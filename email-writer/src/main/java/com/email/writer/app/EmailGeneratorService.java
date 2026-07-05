@@ -1,17 +1,69 @@
 package com.email.writer.app;
 
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
+// import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
+// @RequiredArgsConstructor
 public class EmailGeneratorService {
+
+    @Value("${gemini.api.key}")
+    private String geminiApiKey;
+    @Value("${gemini.api.url}")
+    private String geminiApiUrl;
     
+    private final WebClient webClient;
+
+    public EmailGeneratorService(WebClient.Builder webClientBuilder) {
+        this.webClient = webClientBuilder.build();
+    }
+
+
     public String generateEmail(EmailRequest emailRequest) {
 
         String prompt = buildPrompt(emailRequest);
 
 
-        return "";
+        Map<String, Object> requestBody = Map.of(
+            "contents" , new Object []{
+                Map.of(
+                    "parts", new Object []{
+                        Map.of("text", prompt)
+                    }
+                )
+            }
+        );
 
+
+        String response = webClient.post()
+            .uri(geminiApiUrl+geminiApiKey)
+            .header("Content-Type", "application/json")
+            .bodyValue(requestBody)
+            .retrieve()
+            .bodyToMono(String.class)
+            .block();
+        return extractResponseContent(response);
+
+    }
+
+    private String extractResponseContent(String response) {
+        
+        try{
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(response);
+            return rootNode.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
+        }
+        catch(Exception e){
+            return "Error extracting response content: " + e.getMessage();
+        }
     }
 
     private String buildPrompt(EmailRequest emailRequest) {
