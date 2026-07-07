@@ -20,31 +20,36 @@ function getEmailContent() {
 }
 
 
+// function findComposeToolbar() {
+
+
+//     const selectors = [
+//         '.aDh', // Gmail compose toolbar
+//         '.btC', // Gmail reply toolbar
+//         '[role="toolbar"]',
+//         '.gU.Up'
+//     ];
+
+//     for(const selector of selectors) {
+//         const toolbar = document.querySelector(selector);
+//         if(toolbar) {
+//             return toolbar;
+//         }
+//     }
+
+//     return null;
+// }
+
 function findComposeToolbar() {
-
-
-    const selectors = [
-        '.aDh', // Gmail compose toolbar
-        '.btC', // Gmail reply toolbar
-        '[role="toolbar"]',
-        '.gU.Up'
-    ];
-
-    for(const selector of selectors) {
-        const toolbar = document.querySelector(selector);
-        if(toolbar) {
-            return toolbar;
-        }
-    }
-
-    return null;
+    return document.querySelector(".dC");
 }
 
 function createAIButton() {
 
     const button = document.createElement('div');
     button.className = "T-I J-J5-Ji aoO v7 T-I-atl L3";
-    button.style.marginRight = "8px";
+    button.style.marginLeft = "12px";
+    button.style.marginRight = "12px";
     button.innerHTML = 'AI Reply';
     button.setAttribute('role', 'button');
     button.setAttribute('data-tooltip', 'Generate AI Reply');
@@ -64,7 +69,7 @@ function injectButton(){
         console.log("Toolbar not found");
         return;
     }
-    console.log(toolbar)
+    console.log(toolbar.innerHTML)
     const button = createAIButton();
 
     button.classList.add('ai-reply-button');
@@ -114,6 +119,8 @@ function injectButton(){
     });
 
     toolbar.insertBefore(button, toolbar.firstChild);
+    // toolbar.appendChild(button);
+  
 }
 const observer = new MutationObserver((mutations) => {
 
