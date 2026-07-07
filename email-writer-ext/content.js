@@ -1,5 +1,25 @@
 console.log("Email Writer Assistant Extension - Content Script Loaded");
 
+function getEmailContent() {
+
+    const selectors = [
+        '.h7', 
+        '.a3s.aiL', 
+        '.gmail_quote', // Gmail quoted text
+        '[role="presentation"]'
+    ];
+
+    for(const selector of selectors) {
+        const content = document.querySelector(selector);
+        if(content) {
+            return content.innerText.trim();
+        }
+    }
+
+    return '';
+}
+
+
 function findComposeToolbar() {
 
 
@@ -44,7 +64,7 @@ function injectButton(){
         console.log("Toolbar not found");
         return;
     }
-    console.log("Toolbar found.")
+    console.log(toolbar)
     const button = createAIButton();
 
     button.classList.add('ai-reply-button');
@@ -52,6 +72,45 @@ function injectButton(){
     button.addEventListener('click', async () => {
         console.log("AI Reply Button Clicked");
 
+        try{
+            button.innerHTML = 'Generating...';
+            button.disabled = true;
+
+            const emailContent = getEmailContent();
+
+            const response = await fetch('http://localhost:8080/api/email/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ emailContent: emailContent,
+                    tone : 'professional'
+                 })
+            });
+
+            if(!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const generatedReply = await response.text();
+            const composeBox = document.querySelector('[role = "textbox"][g_editable="true"]');
+
+            if(composeBox) {
+                composeBox.focus();
+                document.execCommand('insertText', false, generatedReply);
+            }
+            else{
+                console.error("Compose box not found");
+            }
+        }
+        catch(error){
+            console.error("Error generating AI reply:", error);
+            alert("Error generating AI reply. Please check the console for details.");
+        }
+        finally {
+            button.innerHTML = 'AI Reply';
+            button.disabled = false;
+        }
     });
 
     toolbar.insertBefore(button, toolbar.firstChild);

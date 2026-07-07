@@ -8,7 +8,7 @@
   },
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
-    "https://localhost:8080/*",
+    "http://localhost:8080/*",
     "*://mail.google.com/*"
   ],
   "content_scripts": [
