@@ -14,6 +14,8 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function App() {
   const [emailContent, setEmailContent] = useState('');
   const [tone, setTone] = useState('');
@@ -27,8 +29,8 @@ function App() {
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/email/generate',
-        {
+         `${API_URL}/api/email/generate`,
+         {
           emailContent,
           tone,
         }
