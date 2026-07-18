@@ -6,3 +6,6 @@ services:
     buildCommand: ./mvnw clean package -DskipTests
     startCommand: java -jar target/*.jar
     plan: free
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
