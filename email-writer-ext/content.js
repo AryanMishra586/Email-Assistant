@@ -1,3 +1,8 @@
+import getApiUrl from "./config.js";
+
+const API_URL = await getApiUrl();
+
+
 console.log("Email Writer Assistant Extension - Content Script Loaded");
 
 function getEmailContent() {
@@ -83,7 +88,7 @@ function injectButton(){
 
             const emailContent = getEmailContent();
 
-            const response = await fetch('http://localhost:8080/api/email/generate', {
+            const response = await fetch(`${API_URL}/api/email/generate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
