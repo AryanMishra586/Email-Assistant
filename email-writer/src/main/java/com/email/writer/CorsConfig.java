@@ -10,7 +10,11 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://mail.google.com")
+                .allowedOrigins(
+                        "http://localhost:5173",
+                        "https://mail.google.com",
+                        "https://email-assistant-git-main-aryan-mishras-projects-bcf2c0d6.vercel.app"
+                )
                 .allowedMethods("GET", "POST", "OPTIONS")
                 .allowedHeaders("*");
     }
