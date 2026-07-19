@@ -1,6 +1,4 @@
-import getApiUrl from "./config.js";
-
-const API_URL = await getApiUrl();
+import API_URL from "./config.js";
 
 
 console.log("Email Writer Assistant Extension - Content Script Loaded");
